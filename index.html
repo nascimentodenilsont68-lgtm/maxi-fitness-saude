@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Calculadora Fitness</title>
+<style>
+body{
+font-family: Arial;
+padding:20px;
+max-width:400px;
+margin:auto;
+}
+input, select{
+width:100%;
+margin-top:5px;
+padding:8px;
+}
+button{
+margin-top:10px;
+padding:10px;
+width:100%;
+cursor:pointer;
+background:#ff4d6d;
+color:white;
+border:none;
+}
+.barra-container{
+width:100%;
+background:#eee;
+height:20px;
+margin-top:10px;
+}
+#barraCalorias{
+height:100%;
+width:0%;
+background:#ff4d6d;
+transition:0.5s;
+}
+</style>
+</head>
+<body>
+
+<h2>Calcular IMC</h2>
+<input id="peso" placeholder="Peso (kg)">
+<input id="altura" placeholder="Altura (m)">
+<button onclick="calcularIMC()">Calcular IMC</button>
+<p id="resultadoIMC"></p>
+
+<hr>
+
+<h2>Calorias Queimadas</h2>
+<input id="pesoCal" placeholder="Peso (kg)">
+<input id="tempoExercicio" placeholder="Tempo (min)">
+<select id="tipoExercicio">
+<option value="3">Caminhada</option>
+<option value="6">Musculação</option>
+<option value="8">Corrida</option>
+</select>
+<button onclick="calcularCalorias()">Calcular Calorias</button>
+<p id="resultadoCalorias"></p>
+<p id="nivelTreino"></p>
+
+<div class="barra-container">
+<div id="barraCalorias"></div>
+</div>
+
+<script>
+function calcularIMC(){
+let peso = parseFloat(document.getElementById("peso").value);
+let altura = parseFloat(document.getElementById("altura").value);
+let resultado = document.getElementById("resultadoIMC");
+
+if(isNaN(peso) || isNaN(altura) || altura <= 0){
+resultado.innerHTML="Preencha corretamente.";
+return;
+}
+
+let imc = peso/(altura*altura);
+resultado.innerHTML = "IMC: " + imc.toFixed(1);
+}
+
+function calcularCalorias(){
+let peso = parseFloat(document.getElementById("pesoCal").value);
+let tempoMin = parseFloat(document.getElementById("tempoExercicio").value);
+let met = parseFloat(document.getElementById("tipoExercicio").value);
+
+let resultado = document.getElementById("resultadoCalorias");
+let barra = document.getElementById("barraCalorias");
+let nivel = document.getElementById("nivelTreino");
+
+if(isNaN(peso) || isNaN(tempoMin)){
+resultado.innerHTML="Preencha corretamente.";
+return;
+}
+
+let calorias = met * peso * (tempoMin/60);
+resultado.innerHTML = calorias.toFixed(0) + " kcal";
+let porcentagem = Math.min((calorias/700)*100,100);
+barra.style.width = porcentagem + "%";
+
+if(calorias < 300){
+nivel.innerHTML="Treino Leve";
+}
+else if(calorias <= 600){
+nivel.innerHTML="Treino Moderado";
+}
+else{
+nivel.innerHTML="Treino Intenso";
+}
+}
+</script>
+
+</body>
+</html>
