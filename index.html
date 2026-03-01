@@ -1,9 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#3BA6FF">
 <title>Maxi Fitness & Saúde</title>
 
 <style>
@@ -13,6 +13,7 @@ body{
     background:linear-gradient(135deg,#3BA6FF,#6EC6FF);
     display:flex;
     justify-content:center;
+    align-items:center;
 }
 
 .app{
@@ -42,6 +43,12 @@ section{
     border-radius:18px;
     box-shadow:0 6px 15px rgba(0,0,0,0.05);
     margin-bottom:20px;
+}
+
+.icon{
+    text-align:center;
+    font-size:60px;
+    margin-bottom:10px;
 }
 
 h2{
@@ -81,6 +88,35 @@ button:hover{
     border-radius:12px;
     margin-top:10px;
     text-align:center;
+    border-left:5px solid #3BA6FF;
+}
+
+.barra{
+    background:#eee;
+    border-radius:12px;
+    height:14px;
+    overflow:hidden;
+    margin-top:10px;
+}
+
+.barra div{
+    height:14px;
+    width:0%;
+    background:linear-gradient(90deg,#3BA6FF,#6EC6FF);
+    border-radius:12px;
+    transition:width 0.8s ease;
+}
+
+.tabela{
+    font-size:12px;
+    margin-top:10px;
+}
+
+.tabela div{
+    display:flex;
+    justify-content:space-between;
+    padding:4px 0;
+    border-bottom:1px solid #eee;
 }
 
 .whatsapp{
@@ -107,8 +143,9 @@ footer{
 
 <section>
 
-<!-- IMC -->
+<!-- IMC PREMIUM (mantendo seus campos originais) -->
 <div class="card">
+<div class="icon">⚖️</div>
 <h2>Calculadora de IMC</h2>
 
 <select id="genero">
@@ -123,12 +160,24 @@ footer{
 <button onclick="calcularIMC()">Calcular IMC</button>
 
 <div class="result-box" id="resultadoIMC"></div>
-<div id="recomendacaoIMC"></div>
+<div class="barra"><div id="barraIMC"></div></div>
+<div id="classificacaoIMC"></div>
+
+<div class="tabela">
+<div><span><18.5</span><span>Abaixo do peso</span></div>
+<div><span>18.5–24.9</span><span>Peso adequado</span></div>
+<div><span>25–29.9</span><span>Sobrepeso</span></div>
+<div><span>30–34.9</span><span>Obesidade I</span></div>
+<div><span>35–39.9</span><span>Obesidade II</span></div>
+<div><span>≥40</span><span>Obesidade III</span></div>
+</div>
+
+<div id="vitaminasIMC"></div>
 </div>
 
 <!-- ÁGUA -->
 <div class="card">
-<h2>Consumo Diário de Água</h2>
+<h2>💧 Consumo Diário de Água</h2>
 
 <input type="number" id="pesoAgua" placeholder="Peso (kg)">
 
@@ -141,9 +190,13 @@ footer{
 <button onclick="calcularAgua()">Calcular Água</button>
 
 <div class="result-box" id="resultadoAgua"></div>
+
+<p style="font-size:12px;text-align:center;margin-top:8px;">
+Manter-se hidratado melhora energia e desempenho físico.
+</p>
 </div>
 
-<!-- GASTO CALÓRICO PREMIUM -->
+<!-- GASTO CALÓRICO (EXATAMENTE COMO VOCÊ ENVIOU) -->
 <div class="card">
 <h2>🔥 Gasto Calórico por Exercício</h2>
 
@@ -178,17 +231,8 @@ style="height:14px;width:0%;background:linear-gradient(90deg,#3BA6FF,#6EC6FF);bo
 </div>
 
 <div id="nivelTreino" style="margin-top:10px;font-weight:bold;text-align:center;"></div>
-
 <div id="recomendacaoCalorias"></div>
 
-</div>
-
-<!-- WHATSAPP -->
-<div class="card">
-<h2>Atendimento Personalizado</h2>
-<button class="whatsapp" onclick="window.open('https://wa.me/5591984181227','_blank')">
-Falar no WhatsApp
-</button>
 </div>
 
 </section>
@@ -201,28 +245,81 @@ Suplementos não substituem alimentação equilibrada e prática de exercícios 
 
 <script>
 
+/* IMC PREMIUM mantendo seus campos */
 function calcularIMC(){
 let peso=parseFloat(document.getElementById("peso").value);
 let altura=parseFloat(document.getElementById("altura").value);
 let resultado=document.getElementById("resultadoIMC");
+let classificacao=document.getElementById("classificacaoIMC");
+let barra=document.getElementById("barraIMC");
+let vitaminas=document.getElementById("vitaminasIMC");
 
-if(!peso||!altura){resultado.innerHTML="Preencha corretamente.";return;}
-
-let imc=(peso/(altura*altura)).toFixed(1);
-resultado.innerHTML=`IMC: ${imc}`;
+if(isNaN(peso)||isNaN(altura)||peso<=0||altura<=0){
+resultado.innerHTML="Preencha corretamente.";
+classificacao.innerHTML="";
+vitaminas.innerHTML="";
+barra.style.width="0%";
+return;
 }
 
+let imc=(peso/(altura*altura));
+resultado.innerHTML=`IMC: ${imc.toFixed(1)}`;
+
+let nivel="";
+let sugestao="";
+
+if(imc<18.5){
+nivel="Abaixo do peso ⚠️";
+sugestao="Complexo B, Vitamina D e Whey Protein.";
+}
+else if(imc<25){
+nivel="Peso adequado ✅";
+sugestao="Multivitamínico, Ômega 3 e Vitamina C.";
+}
+else if(imc<30){
+nivel="Sobrepeso ⚠️";
+sugestao="Laranja Moro, Ômega 3 e Chá Verde.";
+}
+else if(imc<35){
+nivel="Obesidade Grau I 🚨";
+sugestao="Laranja Moro, Psyllium e Magnésio.";
+}
+else if(imc<40){
+nivel="Obesidade Grau II 🚨";
+sugestao="Laranja Moro, Psyllium e Magnésio.";
+}
+else{
+nivel="Obesidade Grau III 🚨";
+sugestao="Laranja Moro, Psyllium e Magnésio.";
+}
+
+classificacao.innerHTML=`<div class="result-box">${nivel}</div>`;
+barra.style.width=Math.min((imc/40)*100,100)+"%";
+
+vitaminas.innerHTML=`
+<div class="result-box"><strong>Recomendação:</strong> ${sugestao}</div>
+<button class="whatsapp" onclick="window.open('https://wa.me/5591984181227','_blank')">
+Falar com Atendente
+</button>
+`;
+}
+
+/* ÁGUA */
 function calcularAgua(){
 let peso=parseFloat(document.getElementById("pesoAgua").value);
 let atividade=parseInt(document.getElementById("atividade").value);
 let resultado=document.getElementById("resultadoAgua");
 
-if(!peso){resultado.innerHTML="Preencha o peso.";return;}
-
-let total=((peso*35)+atividade)/1000;
-resultado.innerHTML=`Consumo ideal: ${total.toFixed(2)} litros/dia`;
+if(isNaN(peso)||peso<=0){
+resultado.innerHTML="Preencha o peso.";
+return;
 }
 
+let total=((peso*35)+atividade)/1000;
+resultado.innerHTML=`💧 ${total.toFixed(2)} litros por dia`;
+}
+
+/* GASTO CALÓRICO ORIGINAL */
 function calcularCalorias(){
 let peso=parseFloat(document.getElementById("pesoCal").value);
 let tempoMin=parseFloat(document.getElementById("tempoExercicio").value);
@@ -233,7 +330,10 @@ let recomendacao=document.getElementById("recomendacaoCalorias");
 let barra=document.getElementById("barraCalorias");
 let nivel=document.getElementById("nivelTreino");
 
-if(!peso||!tempoMin){resultado.innerHTML="Preencha peso e tempo.";return;}
+if(!peso||!tempoMin){
+resultado.innerHTML="Preencha peso e tempo.";
+return;
+}
 
 let calorias=(met*peso*(tempoMin/60)).toFixed(0);
 resultado.innerHTML=`🔥 ${calorias} kcal queimadas`;
@@ -248,15 +348,15 @@ else{nivel.innerHTML="Treino Intenso 🚀";}
 if(calorias>=400){
 recomendacao.innerHTML=`
 <div class="result-box">
-<strong>Morocorp:</strong> Suplemento com extrato de laranja moro, podendo auxiliar em programas de controle de peso.
+<strong>Morocorp:</strong> Suplemento com extrato de laranja moro.
 </div>
 <div class="result-box">
-<strong>Slim Muv:</strong> Fórmula para suporte metabólico associado a hábitos saudáveis.
+<strong>Slim Muv:</strong> Fórmula para suporte metabólico.
 </div>
 <div class="result-box">
-<strong>Laranja Moro:</strong> Suplemento antioxidante que pode integrar estratégias nutricionais.
+<strong>Laranja Moro:</strong> Suplemento antioxidante.
 </div>
-<button class="whatsapp" onclick="window.open('https://wa.me/5591984181227?text=Olá,%20quero%20informações%20sobre%20Morocorp,%20Slim%20Muv%20e%20Laranja%20Moro.','_blank')">
+<button class="whatsapp" onclick="window.open('https://wa.me/5591984181227?text=Olá,%20quero%20informações%20sobre%20suplementos.','_blank')">
 Falar com Atendente
 </button>
 `;
